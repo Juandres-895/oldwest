@@ -56,6 +56,7 @@ export function MenuBook({
   const bookRef = useRef<FlipBookRef | null>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [showToc, setShowToc] = useState(false)
+  const festive = location.slug === 'bellavista'
 
   const bookPages = useMemo<BookPage[]>(() => {
     const pages: BookPage[] = []
@@ -98,9 +99,10 @@ export function MenuBook({
           partIndex={page.partIndex}
           partCount={page.partCount}
           pageLabel={`${index + 1} ${t('pageOf')} ${bookPages.length}`}
+          festive={festive}
         />
       )),
-    [bookPages, t]
+    [bookPages, t, festive]
   )
 
   return (
@@ -162,7 +164,7 @@ export function MenuBook({
           clickEventForward
           onFlip={(e: { data: number }) => setCurrentPage(e.data)}
         >
-          <BookCover location={location} />
+          <BookCover location={location} festive={festive} />
           {pages}
         </HTMLFlipBook>
 

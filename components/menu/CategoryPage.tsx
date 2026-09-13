@@ -2,6 +2,7 @@ import { forwardRef, memo } from 'react'
 import { useLanguage } from '@/lib/i18n/LanguageProvider'
 import type { MenuCategory, MenuDish } from '@/lib/data/menu'
 import { MenuItemCard } from './MenuItemCard'
+import { PapelPicadoDivider } from './PapelPicadoDivider'
 
 export const CategoryPage = memo(
   forwardRef<
@@ -12,9 +13,10 @@ export const CategoryPage = memo(
       partIndex: number
       partCount: number
       pageLabel: string
+      festive?: boolean
     }
   >(function CategoryPage(
-    { category, items, partIndex, partCount, pageLabel },
+    { category, items, partIndex, partCount, pageLabel, festive },
     ref
   ) {
     const { pick, t } = useLanguage()
@@ -38,7 +40,11 @@ export const CategoryPage = memo(
               {pick(category.taglineEs ?? '', category.taglineEn ?? '')}
             </p>
           )}
-          <div className="divider-brass mt-4 mb-5" />
+          {festive ? (
+            <PapelPicadoDivider className="mt-4 mb-5" />
+          ) : (
+            <div className="divider-brass mt-4 mb-5" />
+          )}
 
           {items.length === 0 ? (
             <p className="font-body text-sm text-bone-muted">
