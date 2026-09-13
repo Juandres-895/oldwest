@@ -1,11 +1,11 @@
-import { forwardRef } from 'react'
+import { forwardRef, memo } from 'react'
 import { BrandMark } from './BrandMark'
 import { useLanguage } from '@/lib/i18n/LanguageProvider'
 import type { Database } from '@/lib/supabase/database.types'
 
 type Location = Database['public']['Tables']['locations']['Row']
 
-export const BookCover = forwardRef<HTMLDivElement, { location: Location }>(
+export const BookCover = memo(forwardRef<HTMLDivElement, { location: Location }>(
   function BookCover({ location }, ref) {
     const { t } = useLanguage()
 
@@ -30,4 +30,4 @@ export const BookCover = forwardRef<HTMLDivElement, { location: Location }>(
       </div>
     )
   }
-)
+))

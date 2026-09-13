@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useRef, useState } from 'react'
 import dynamic from 'next/dynamic'
 import { useLanguage } from '@/lib/i18n/LanguageProvider'
-import type { MenuCategory } from '@/lib/data/menu'
+import type { MenuCategory, MenuDish } from '@/lib/data/menu'
 import type { Database } from '@/lib/supabase/database.types'
 import { BookCover } from './BookCover'
 import { CategoryPage } from './CategoryPage'
@@ -24,6 +24,27 @@ type PageFlipInstance = {
   getCurrentPageIndex: () => number
 }
 
+// Conservative item count per physical page — keeps every page's content
+// within the fixed page height without ever needing inner scroll, which
+// would otherwise fight the book's own swipe-to-flip touch handling.
+const ITEMS_PER_PAGE = 3
+
+type BookPage = {
+  category: MenuCategory
+  items: MenuDish[]
+  partIndex: number
+  partCount: number
+}
+
+function chunk<T>(items: T[], size: number): T[][] {
+  if (items.length === 0) return [[]]
+  const chunks: T[][] = []
+  for (let i = 0; i < items.length; i += size) {
+    chunks.push(items.slice(i, i + size))
+  }
+  return chunks
+}
+
 export function MenuBook({
   location,
   categories,
@@ -36,17 +57,50 @@ export function MenuBook({
   const [currentPage, setCurrentPage] = useState(0)
   const [showToc, setShowToc] = useState(false)
 
-  const totalPages = categories.length + 1 // + cover
-  const currentCategoryIndex = currentPage - 1 // -1 while on the cover
+  const bookPages = useMemo<BookPage[]>(() => {
+    const pages: BookPage[] = []
+    for (const category of categories) {
+      const chunks = chunk(category.items, ITEMS_PER_PAGE)
+      chunks.forEach((items, partIndex) => {
+        pages.push({ category, items, partIndex, partCount: chunks.length })
+      })
+    }
+    return pages
+  }, [categories])
+
+  const categoryFirstPage = useMemo(() => {
+    const firstPageByCategoryId = new Map<string, number>()
+    bookPages.forEach((page, index) => {
+      if (page.partIndex === 0 && !firstPageByCategoryId.has(page.category.id)) {
+        firstPageByCategoryId.set(page.category.id, index + 1) // +1 for cover
+      }
+    })
+    return firstPageByCategoryId
+  }, [bookPages])
+
+  const totalPages = bookPages.length + 1 // + cover
+  const currentBookPageIndex = currentPage - 1 // -1 while on the cover
+  const currentBookPage =
+    currentBookPageIndex >= 0 ? bookPages[currentBookPageIndex] : null
 
   const goToPage = useCallback((page: number) => {
     bookRef.current?.pageFlip().turnToPage(page)
     setShowToc(false)
   }, [])
 
-  const pageLabel = useMemo(
-    () => (index: number) => `${index + 1} ${t('pageOf')} ${categories.length}`,
-    [categories.length, t]
+  const pages = useMemo(
+    () =>
+      bookPages.map((page, index) => (
+        <CategoryPage
+          key={`${page.category.id}-${page.partIndex}`}
+          category={page.category}
+          items={page.items}
+          partIndex={page.partIndex}
+          partCount={page.partCount}
+          pageLabel={`${index + 1} ${t('pageOf')} ${bookPages.length}`}
+        />
+      )),
+    [bookPages, t]
   )
 
   return (
@@ -62,11 +116,8 @@ export function MenuBook({
         </button>
 
         <p className="min-w-0 flex-1 truncate text-center font-heading text-base text-brass-light">
-          {currentCategoryIndex >= 0
-            ? pick(
-                categories[currentCategoryIndex]?.nameEs ?? '',
-                categories[currentCategoryIndex]?.nameEn ?? ''
-              )
+          {currentBookPage
+            ? pick(currentBookPage.category.nameEs, currentBookPage.category.nameEn)
             : location.name}
         </p>
 
@@ -112,13 +163,7 @@ export function MenuBook({
           onFlip={(e: { data: number }) => setCurrentPage(e.data)}
         >
           <BookCover location={location} />
-          {categories.map((category, index) => (
-            <CategoryPage
-              key={category.id}
-              category={category}
-              pageLabel={pageLabel(index)}
-            />
-          ))}
+          {pages}
         </HTMLFlipBook>
 
         <button
@@ -161,11 +206,13 @@ export function MenuBook({
             >
               {t('backToCover')}
             </button>
-            {categories.map((category, index) => (
+            {categories.map((category) => (
               <button
                 key={category.id}
                 type="button"
-                onClick={() => goToPage(index + 1)}
+                onClick={() =>
+                  goToPage(categoryFirstPage.get(category.id) ?? 1)
+                }
                 className="w-full rounded-lg px-3 py-2 text-left font-body text-sm text-bone hover:bg-surface-2"
               >
                 {pick(category.nameEs, category.nameEn)}

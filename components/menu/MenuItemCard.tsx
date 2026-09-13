@@ -15,15 +15,11 @@ export function MenuItemCard({ dish }: { dish: MenuDish }) {
   const description = pick(dish.descriptionEs ?? '', dish.descriptionEn ?? '')
 
   return (
-    <article
+    <button
+      type="button"
       onClick={() => openDish(dish)}
-      role="button"
-      tabIndex={0}
-      onKeyDown={(e) => {
-        if (e.key === 'Enter' || e.key === ' ') openDish(dish)
-      }}
       className={clsx(
-        'group flex gap-4 rounded-xl border border-brass/15 bg-surface p-3 text-left transition-colors active:bg-surface-2',
+        'group flex w-full gap-4 rounded-xl border border-brass/15 bg-surface p-3 text-left transition-colors active:bg-surface-2',
         dish.isSoldOutToday && 'opacity-60'
       )}
     >
@@ -78,6 +74,6 @@ export function MenuItemCard({ dish }: { dish: MenuDish }) {
         </div>
         <TagBadges dish={dish} className="mt-2" />
       </div>
-    </article>
+    </button>
   )
 }
