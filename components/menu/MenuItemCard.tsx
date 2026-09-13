@@ -19,10 +19,17 @@ export function MenuItemCard({ dish }: { dish: MenuDish }) {
       type="button"
       onClick={() => openDish(dish)}
       className={clsx(
-        'group flex w-full gap-4 rounded-xl border border-brass/15 bg-surface p-3 text-left transition-colors active:bg-surface-2',
+        'group w-full rounded-xl border border-brass/15 bg-surface p-3 text-left transition-colors active:bg-surface-2',
         dish.isSoldOutToday && 'opacity-60'
       )}
     >
+      {/*
+        react-pageflip only forwards a tap to its underlying <button>/<a> when
+        the exact touch target's tagName is "button"/"a" — it doesn't walk up
+        to an ancestor. Every visual child below is pointer-events-none so a
+        tap anywhere on the card always hit-tests to this <button> itself.
+      */}
+      <div className="pointer-events-none flex gap-4">
       {dish.imageUrl && (
         <div className="relative h-24 w-24 shrink-0 overflow-hidden rounded-lg bg-surface-2 sm:h-28 sm:w-28">
           <Image
@@ -73,6 +80,7 @@ export function MenuItemCard({ dish }: { dish: MenuDish }) {
           )}
         </div>
         <TagBadges dish={dish} className="mt-2" />
+      </div>
       </div>
     </button>
   )
