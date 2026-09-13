@@ -6,8 +6,7 @@ import {
   getMenuForLocation,
 } from '@/lib/data/menu'
 import { HeroSection } from '@/components/menu/HeroSection'
-import { StickyNav } from '@/components/menu/StickyNav'
-import { CategorySection } from '@/components/menu/CategorySection'
+import { MenuBook } from '@/components/menu/MenuBook'
 import { LocationUnavailable } from '@/components/menu/LocationUnavailable'
 
 export const revalidate = 60
@@ -52,18 +51,13 @@ export default async function LocationMenuPage({
   const menu = await getMenuForLocation(slug)
   const categories = menu?.categories ?? []
 
-  return (
-    <main className="min-h-screen bg-background pb-16">
-      <HeroSection location={location} />
-      {categories.length > 0 && (
-        <StickyNav categories={categories} locationName={location.name} />
-      )}
+  if (categories.length === 0) {
+    return (
+      <main className="min-h-screen bg-background pb-16">
+        <HeroSection location={location} />
+      </main>
+    )
+  }
 
-      <div className="mx-auto max-w-2xl divide-y divide-brass/10 px-4">
-        {categories.map((category) => (
-          <CategorySection key={category.id} category={category} />
-        ))}
-      </div>
-    </main>
-  )
+  return <MenuBook location={location} categories={categories} />
 }
