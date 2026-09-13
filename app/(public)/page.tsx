@@ -16,9 +16,9 @@ export default async function LocationsHubPage() {
         fill
         priority
         sizes="100vw"
-        className="scale-105 object-cover object-center blur-lg"
+        className="scale-105 object-cover object-center blur-[10px]"
       />
-      <div className="absolute inset-0 bg-background/80" />
+      <div className="absolute inset-0 bg-background/65" />
 
       <div className="relative flex w-full flex-col items-center">
         <BrandMark priority />
