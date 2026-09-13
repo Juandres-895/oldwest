@@ -10,19 +10,24 @@ fotos) se administra desde un panel propio, sin necesitar un desarrollador.
 - Supabase (Postgres + Auth + Storage) — proyecto **old-west-steak-house**
   (org "Juandres", región us-east-1), ya creado y con el esquema + contenido
   real de Caobos y Bellavista cargados.
-- Vercel (hosting, pendiente de desplegar)
+- Vercel (hosting) — proyecto **oldwest** (team "juandres"), en producción en
+  [oldwest-juandres.vercel.app](https://oldwest-juandres.vercel.app), conectado
+  al repo de GitHub `Juandres-895/oldwest` (cada push a `master` redespliega
+  automático).
 
-## 1. Crear tu usuario administrador (pendiente — solo tú puedes hacerlo)
+## Producción — ya desplegado
 
-En el [dashboard de Supabase](https://supabase.com/dashboard/project/vlrzbxxfysnddznrgrwy):
+- Menú público: `https://oldwest-juandres.vercel.app/caobos`,
+  `/bellavista` (destino directo de cada QR).
+- Panel admin: `https://oldwest-juandres.vercel.app/admin/login`, con el
+  usuario que ya creaste en el dashboard de Supabase.
+- Variables de entorno configuradas en Vercel (Project Settings →
+  Environment Variables): `NEXT_PUBLIC_SUPABASE_URL`,
+  `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`.
+- Fotos de platos/bebidas servidas desde Supabase Storage (bucket
+  `menu-images`, público de solo lectura), no desde `public/menu`.
 
-1. **Authentication → Sign In / Providers**: confirma que el login por
-   correo/contraseña esté activo y **desactiva** "Allow new users to sign up"
-   (solo tú vas a administrar el menú).
-2. **Authentication → Users → Add user**: crea tu usuario (correo +
-   contraseña) — con esas credenciales entrarás a `/admin`.
-
-## 2. Variables de entorno
+## 1. Variables de entorno (solo para correr en local)
 
 Ya están cargadas en `.env.local` apuntando al proyecto real. Si necesitas
 recrearlas:
@@ -33,7 +38,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=... (Project Settings → API → anon public key)
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
 ```
 
-## 3. Correr en local
+## 2. Correr en local
 
 ```bash
 npm install
@@ -43,20 +48,19 @@ npm run dev
 - Menú público: [http://localhost:3000](http://localhost:3000) → elige una
   sede, o entra directo a `/caobos`, `/bellavista`.
 - Panel admin: [http://localhost:3000/admin/login](http://localhost:3000/admin/login)
-  con el usuario que creaste en el paso 1.
+  con tu usuario de Supabase.
 
-## 4. Desplegar
+## 3. Desplegar cambios nuevos
 
-1. Sube el repo a GitHub.
-2. Impórtalo en [Vercel](https://vercel.com/new).
-3. Configura las 3 variables de entorno del paso 2 (con
-   `NEXT_PUBLIC_SITE_URL` apuntando a la URL que te da Vercel).
-4. Despliega. Desde `/admin/qr` podrás descargar el código QR de cada sede
-   (SVG para imprimir en alta calidad, PNG para compartir).
+Ya no hace falta nada manual: cualquier cambio que hagas (código, o desde el
+admin) se ve reflejado con solo hacer `git push` a `master` — Vercel
+redespliega solo. Desde `/admin/qr` puedes descargar el código QR de cada
+sede (SVG para imprimir en alta calidad, PNG para compartir).
 
 Cuando compres un dominio propio: agrégalo en Vercel (Project Settings →
-Domains), actualiza `NEXT_PUBLIC_SITE_URL` y vuelve a desplegar — sin tocar
-código. Los QR ya impresos con la URL de Vercel siguen funcionando siempre.
+Domains), actualiza `NEXT_PUBLIC_SITE_URL` ahí mismo y en `.env.local`, y
+vuelve a desplegar — sin tocar código. Los QR ya impresos con la URL de
+Vercel siguen funcionando siempre.
 
 ## Contenido cargado hasta ahora
 

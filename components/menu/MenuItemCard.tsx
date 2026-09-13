@@ -5,17 +5,25 @@ import { useLanguage } from '@/lib/i18n/LanguageProvider'
 import type { MenuDish } from '@/lib/data/menu'
 import { PriceTag } from './PriceTag'
 import { TagBadges } from './TagBadges'
+import { useDishDetail } from './DishDetailContext'
 import clsx from 'clsx'
 
 export function MenuItemCard({ dish }: { dish: MenuDish }) {
   const { pick, t } = useLanguage()
+  const { openDish } = useDishDetail()
   const name = pick(dish.nameEs, dish.nameEn)
   const description = pick(dish.descriptionEs ?? '', dish.descriptionEn ?? '')
 
   return (
     <article
+      onClick={() => openDish(dish)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') openDish(dish)
+      }}
       className={clsx(
-        'group flex gap-4 rounded-xl border border-brass/15 bg-surface p-3 transition-colors',
+        'group flex gap-4 rounded-xl border border-brass/15 bg-surface p-3 text-left transition-colors active:bg-surface-2',
         dish.isSoldOutToday && 'opacity-60'
       )}
     >
@@ -54,10 +62,13 @@ export function MenuItemCard({ dish }: { dish: MenuDish }) {
       <div className="flex min-w-0 flex-1 flex-col justify-between">
         <div>
           <div className="flex items-start justify-between gap-3">
-            <h3 className="font-heading text-lg leading-snug text-bone">
+            <h3 className="min-w-0 break-words font-heading text-lg leading-snug text-bone">
               {name}
             </h3>
-            <PriceTag cop={dish.priceCop} className="shrink-0 text-base" />
+            <PriceTag
+              cop={dish.priceCop}
+              className="shrink-0 whitespace-nowrap text-base"
+            />
           </div>
           {description && (
             <p className="mt-1 line-clamp-2 font-body text-sm text-bone-muted">

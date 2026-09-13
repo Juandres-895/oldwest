@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers'
 import { LanguageProvider } from '@/lib/i18n/LanguageProvider'
 import { LANGUAGE_COOKIE, type Language } from '@/lib/i18n/dictionary'
+import { DishDetailProvider } from '@/components/menu/DishDetailContext'
 
 export default async function PublicLayout({
   children,
@@ -13,7 +14,7 @@ export default async function PublicLayout({
 
   return (
     <LanguageProvider initialLanguage={initialLanguage}>
-      {children}
+      <DishDetailProvider>{children}</DishDetailProvider>
     </LanguageProvider>
   )
 }

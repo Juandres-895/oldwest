@@ -21,6 +21,7 @@ export const dictionary = {
     address: 'Dirección',
     phone: 'Teléfono',
     priceOnRequest: 'Consultar',
+    close: 'Cerrar',
   },
   en: {
     soldOutToday: 'Sold out today',
@@ -40,5 +41,6 @@ export const dictionary = {
     address: 'Address',
     phone: 'Phone',
     priceOnRequest: 'Ask your server',
+    close: 'Close',
   },
 } as const satisfies Record<Language, Record<string, string>>
