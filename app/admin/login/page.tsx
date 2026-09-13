@@ -43,9 +43,9 @@ export default function AdminLoginPage() {
         fill
         priority
         sizes="100vw"
-        className="scale-110 object-cover object-center blur-md"
+        className="scale-105 object-cover object-center blur-[2px]"
       />
-      <div className="absolute inset-0 bg-background/80" />
+      <div className="absolute inset-0 bg-background/55" />
 
       <div className="relative w-full max-w-sm rounded-2xl border border-brass/20 bg-surface/95 p-8 shadow-2xl shadow-black/50 backdrop-blur-sm">
         <BrandMark size="sm" />
