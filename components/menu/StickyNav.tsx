@@ -24,21 +24,43 @@ export function StickyNav({
 
     if (sections.length === 0) return
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const visible = entries
-          .filter((entry) => entry.isIntersecting)
-          .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)
+    // Below the sticky nav (~112px tall) — a section becomes "active" once
+    // its top crosses above this line.
+    const ACTIVATION_LINE = 130
 
-        if (visible[0]) {
-          setActiveSlug(visible[0].target.id)
+    function updateActive() {
+      const nearBottom =
+        window.innerHeight + window.scrollY >=
+        document.documentElement.scrollHeight - 2
+      if (nearBottom) {
+        setActiveSlug(sections[sections.length - 1].id)
+        return
+      }
+
+      let current = sections[0].id
+      for (const section of sections) {
+        if (section.getBoundingClientRect().top <= ACTIVATION_LINE) {
+          current = section.id
+        } else {
+          break
         }
-      },
-      { rootMargin: '-112px 0px -70% 0px', threshold: 0 }
-    )
+      }
+      setActiveSlug(current)
+    }
 
-    sections.forEach((el) => observer.observe(el))
-    return () => observer.disconnect()
+    let ticking = false
+    function onScroll() {
+      if (ticking) return
+      ticking = true
+      requestAnimationFrame(() => {
+        updateActive()
+        ticking = false
+      })
+    }
+
+    window.addEventListener('scroll', onScroll, { passive: true })
+    updateActive()
+    return () => window.removeEventListener('scroll', onScroll)
   }, [categories])
 
   useEffect(() => {
