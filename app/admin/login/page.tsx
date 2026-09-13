@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/client'
 import { loginSchema, type LoginInput } from '@/lib/validation/authSchema'
 import { Field, inputClassName } from '@/components/ui/Field'
@@ -35,8 +36,18 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <main className="texture-wood flex min-h-screen items-center justify-center px-4">
-      <div className="w-full max-w-sm rounded-2xl border border-brass/20 bg-surface p-8">
+    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
+      <Image
+        src="/brand/admin-login-bg.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="scale-110 object-cover object-center blur-md"
+      />
+      <div className="absolute inset-0 bg-background/80" />
+
+      <div className="relative w-full max-w-sm rounded-2xl border border-brass/20 bg-surface/95 p-8 shadow-2xl shadow-black/50 backdrop-blur-sm">
         <BrandMark size="sm" />
         <h1 className="mt-4 text-center font-heading text-2xl text-bone">
           Panel de administración
